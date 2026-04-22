@@ -2,6 +2,7 @@ package com.inventory.service;
 
 import com.inventory.ds.*;
 import com.inventory.model.Product;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,20 +21,51 @@ public class InventoryService {
     private final AVLTree stockTree = new AVLTree();
     private final Map<String, TreeMap<LocalDate, Integer>> salesLog = new HashMap<>();
 
+    private final List<Map<String, Object>> recentlyExpiredLog = new ArrayList<>();
+
     public InventoryService() {
         List<Product> samples = Arrays.asList(
-            new Product("P001", "Amul Milk 500ml",     "Dairy",      120, 20, 28.0,  LocalDate.now().plusDays(3)),
-            new Product("P002", "Britannia Bread",     "Bakery",      45, 15, 42.0,  LocalDate.now().plusDays(5)),
-            new Product("P003", "Fortune Rice 5kg",    "Grains",      80, 10, 285.0, LocalDate.now().plusMonths(6)),
-            new Product("P004", "Maggi Noodles 70g",   "Snacks",     200, 30, 14.0,  LocalDate.now().plusMonths(8)),
-            new Product("P005", "Tropicana OJ 1L",     "Beverages",   18, 15, 99.0,  LocalDate.now().plusDays(7)),
-            new Product("P006", "Haldirams Bhujia",    "Snacks",      60, 20, 120.0, LocalDate.now().plusMonths(3)),
-            new Product("P007", "Amul Butter 500g",    "Dairy",       12, 15, 260.0, LocalDate.now().plusDays(10)),
-            new Product("P008", "Tata Salt 1kg",       "Essentials", 150, 25, 22.0,  LocalDate.now().plusMonths(12)),
-            new Product("P009", "Parle-G Biscuits",    "Snacks",       8, 20, 10.0,  LocalDate.now().plusMonths(5)),
-            new Product("P010", "Mother Dairy Curd",   "Dairy",       35, 20, 54.0,  LocalDate.now().plusDays(2)),
-            new Product("P011", "Aashirvaad Atta 5kg", "Grains",      55, 10, 290.0, LocalDate.now().plusMonths(4)),
-            new Product("P012", "Coca-Cola 2L",        "Beverages",   90, 20, 95.0,  LocalDate.now().plusMonths(9))
+            // Dairy
+            new Product("P001", "Amul Milk 500ml",        "Dairy",      120, 20, 28.0,   LocalDate.now().plusDays(3)),
+            new Product("P002", "Amul Butter 500g",       "Dairy",       12, 15, 260.0,  LocalDate.now().plusDays(10)),
+            new Product("P003", "Mother Dairy Curd 400g", "Dairy",       35, 20, 54.0,   LocalDate.now().minusDays(1)),
+            new Product("P004", "Amul Cheese Slices",     "Dairy",       25, 10, 180.0,  LocalDate.now().plusDays(15)),
+            new Product("P005", "Nestle Yogurt 100g",     "Dairy",       40, 15, 35.0,   LocalDate.now().plusDays(6)),
+
+            // Bakery
+            new Product("P006", "Britannia Bread",        "Bakery",      45, 15, 42.0,   LocalDate.now().plusDays(5)),
+            new Product("P007", "Harvest Gold Bread",     "Bakery",      30, 10, 38.0,   LocalDate.now().plusDays(4)),
+            new Product("P008", "Britannia Cake",         "Bakery",      20, 10, 35.0,   LocalDate.now().plusDays(20)),
+
+            // Grains
+            new Product("P009", "Fortune Rice 5kg",       "Grains",      80, 10, 285.0,  LocalDate.now().plusMonths(6)),
+            new Product("P010", "Aashirvaad Atta 5kg",    "Grains",      55, 10, 290.0,  LocalDate.now().plusMonths(4)),
+            new Product("P011", "Tata Salt 1kg",          "Essentials", 150, 25, 22.0,   LocalDate.now().plusMonths(12)),
+            new Product("P012", "Fortune Poha 500g",      "Grains",      40, 10, 55.0,   LocalDate.now().plusMonths(5)),
+
+            // Snacks
+            new Product("P013", "Maggi Noodles 70g",      "Snacks",     200, 30, 14.0,   LocalDate.now().plusMonths(8)),
+            new Product("P014", "Parle-G Biscuits",       "Snacks",       8, 20, 10.0,   LocalDate.now().plusMonths(5)),
+            new Product("P015", "Haldirams Bhujia 200g",  "Snacks",      60, 20, 120.0,  LocalDate.now().plusMonths(3)),
+            new Product("P016", "Lays Classic Chips",     "Snacks",      75, 20, 20.0,   LocalDate.now().plusMonths(2)),
+            new Product("P017", "Kurkure Masala 90g",     "Snacks",      65, 20, 20.0,   LocalDate.now().plusMonths(2)),
+            new Product("P018", "Hide & Seek Biscuits",   "Snacks",      45, 15, 30.0,   LocalDate.now().plusMonths(6)),
+
+            // Beverages
+            new Product("P019", "Tropicana OJ 1L",        "Beverages",   18, 15, 99.0,   LocalDate.now().plusDays(7)),
+            new Product("P020", "Coca-Cola 2L",           "Beverages",   90, 20, 95.0,   LocalDate.now().plusMonths(9)),
+            new Product("P021", "Minute Maid Pulpy 1L",   "Beverages",   22, 15, 85.0,   LocalDate.now().plusDays(8)),
+            new Product("P022", "Red Bull 250ml",         "Beverages",   50, 15, 125.0,  LocalDate.now().plusMonths(10)),
+            new Product("P023", "Bisleri Water 1L",       "Beverages",  200, 40, 20.0,   LocalDate.now().plusMonths(12)),
+
+            // Personal Care
+            new Product("P024", "Colgate Toothpaste",     "Personal Care", 60, 15, 95.0, LocalDate.now().plusMonths(18)),
+            new Product("P025", "Dove Soap 100g",         "Personal Care", 80, 20, 45.0, LocalDate.now().plusMonths(24)),
+            new Product("P026", "Head & Shoulders 180ml", "Personal Care", 35, 10, 199.0,LocalDate.now().plusMonths(18)),
+
+            // Household
+            new Product("P027", "Surf Excel 1kg",         "Household",   40, 10, 220.0,  LocalDate.now().plusMonths(24)),
+            new Product("P028", "Vim Dishwash Bar",       "Household",   55, 15, 35.0,   LocalDate.now().plusMonths(18))
         );
         samples.forEach(this::addProduct);
 
@@ -42,11 +74,38 @@ public class InventoryService {
             TreeMap<LocalDate, Integer> log = salesLog.computeIfAbsent(
                     p.getId(), k -> new TreeMap<>());
             for (int i = 14; i >= 1; i--) {
-                int qty = 2 + rand.nextInt(p.getId().equals("P009") ? 12 : 4);
+                int qty = 2 + rand.nextInt(p.getId().equals("P014") ? 12 : 4);
                 log.put(LocalDate.now().minusDays(i), qty);
             }
         }
     }
+
+    // ── Auto remove expired products every 60 seconds ─────────────────────
+    @Scheduled(fixedRate = 60000)
+    public void autoRemoveExpiredProducts() {
+        List<Product> all = hashMap.values();
+        for (Product p : all) {
+            if (p.getExpiryDate() != null && p.getExpiryDate().isBefore(LocalDate.now())) {
+                Map<String, Object> log = new LinkedHashMap<>();
+                log.put("productId",   p.getId());
+                log.put("productName", p.getName());
+                log.put("expiryDate",  p.getExpiryDate().toString());
+                log.put("removedAt",   System.currentTimeMillis());
+                recentlyExpiredLog.add(log);
+                deleteProduct(p.getId());
+            }
+        }
+    }
+
+    public List<Map<String, Object>> getRecentlyExpiredLog() {
+        return new ArrayList<>(recentlyExpiredLog);
+    }
+
+    public void clearExpiredLog() {
+        recentlyExpiredLog.clear();
+    }
+
+    // ── CRUD ──────────────────────────────────────────────────────────────
 
     public void addProduct(Product p) {
         hashMap.put(p.getId(), p);
@@ -122,10 +181,10 @@ public class InventoryService {
         }
         result.put("success", true);
         result.put("record", Map.of(
-            "productId", record.productId,
+            "productId",   record.productId,
             "productName", record.productName,
-            "qtySold", record.qtySold,
-            "timestamp", record.timestamp
+            "qtySold",     record.qtySold,
+            "timestamp",   record.timestamp
         ));
         result.put("message", "Undid sale of " + record.qtySold + "x " + record.productName);
         return result;
@@ -133,7 +192,7 @@ public class InventoryService {
 
     public MinHeap<Product> getStockHeap()  { return stockHeap; }
     public MinHeap<Product> getExpiryHeap() { return expiryHeap; }
-    public SaleStack getSaleStack()         { return saleStack; }
+    public SaleStack        getSaleStack()  { return saleStack; }
 
     public List<Product> getByPriceRange(double lo, double hi) { return priceTree.rangeQuery(lo, hi); }
     public List<Product> getByStockRange(double lo, double hi) { return stockTree.rangeQuery(lo, hi); }

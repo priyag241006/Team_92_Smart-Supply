@@ -66,15 +66,6 @@ export default function Sidebar() {
           </NavLink>
         ))}
       </nav>
-
-      <div style={{ padding: '16px 20px', borderTop: '1px solid var(--border)' }}>
-        <div style={{ fontSize: 10, color: 'var(--text-muted)', lineHeight: 1.8 }}>
-          <div style={{ fontWeight: 500, color: 'var(--text-secondary)', marginBottom: 4 }}>DSA Structures</div>
-          <div>HashMap · MinHeap × 2</div>
-          <div>AVL Tree · TreeMap</div>
-          <div>Stack · ArrayList</div>
-        </div>
-      </div>
     </aside>
   )
 }

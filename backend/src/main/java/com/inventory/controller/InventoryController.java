@@ -35,8 +35,12 @@ public class InventoryController {
     @PostMapping("/products")
     public ResponseEntity<String> addProduct(@RequestBody Map<String, Object> body) {
         try {
+            String id = (String) body.get("id");
+            if (inventoryService.getProduct(id) != null) {
+                return ResponseEntity.badRequest().body("Product ID already exists: " + id);
+            }
             Product p = new Product(
-                (String) body.get("id"),
+                id,
                 (String) body.get("name"),
                 (String) body.get("category"),
                 (int) body.get("quantity"),
@@ -78,10 +82,10 @@ public class InventoryController {
         List<Map<String, Object>> history = new ArrayList<>();
         for (var r : inventoryService.getSaleStack().getHistory()) {
             Map<String, Object> m = new LinkedHashMap<>();
-            m.put("productId", r.productId);
+            m.put("productId",   r.productId);
             m.put("productName", r.productName);
-            m.put("qtySold", r.qtySold);
-            m.put("timestamp", r.timestamp);
+            m.put("qtySold",     r.qtySold);
+            m.put("timestamp",   r.timestamp);
             history.add(m);
         }
         return history;
@@ -132,18 +136,29 @@ public class InventoryController {
     @GetMapping("/dashboard")
     public Map<String, Object> getDashboardSummary() {
         List<Product> all = inventoryService.getAllProducts();
-        int lowStockCount = alertService.getLowStockAlerts().size();
-        int expiryCount = alertService.getExpiryAlerts(7).size();
-        int velocityCount = alertService.getVelocityAlerts(7, 3.0).size();
-        double totalValue = all.stream().mapToDouble(p -> p.getPrice() * p.getQuantity()).sum();
+        int lowStockCount  = alertService.getLowStockAlerts().size();
+        int expiryCount    = alertService.getExpiryAlerts(7).size();
+        int velocityCount  = alertService.getVelocityAlerts(7, 3.0).size();
+        double totalValue  = all.stream().mapToDouble(p -> p.getPrice() * p.getQuantity()).sum();
         Map<String, Object> summary = new LinkedHashMap<>();
         summary.put("totalProducts", all.size());
-        summary.put("totalAlerts", lowStockCount + expiryCount + velocityCount);
+        summary.put("totalAlerts",   lowStockCount + expiryCount + velocityCount);
         summary.put("lowStockCount", lowStockCount);
-        summary.put("expiryCount", expiryCount);
+        summary.put("expiryCount",   expiryCount);
         summary.put("velocityCount", velocityCount);
-        summary.put("totalValue", Math.round(totalValue * 100.0) / 100.0);
-        summary.put("topProduct", demandService.getTopSellingProducts(7, 1));
+        summary.put("totalValue",    Math.round(totalValue * 100.0) / 100.0);
+        summary.put("topProduct",    demandService.getTopSellingProducts(7, 1));
         return summary;
+    }
+
+    @GetMapping("/expired-log")
+    public List<Map<String, Object>> getExpiredLog() {
+        return inventoryService.getRecentlyExpiredLog();
+    }
+
+    @DeleteMapping("/expired-log")
+    public ResponseEntity<String> clearExpiredLog() {
+        inventoryService.clearExpiredLog();
+        return ResponseEntity.ok("Cleared");
     }
 }

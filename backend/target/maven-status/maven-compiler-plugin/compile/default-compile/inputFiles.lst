@@ -1,10 +1,11 @@
-C:\Users\Priya Gundale\OneDrive\Documents\smart-inventory-system\backend\src\main\java\com\inventory\controller\InventoryController.java
-C:\Users\Priya Gundale\OneDrive\Documents\smart-inventory-system\backend\src\main\java\com\inventory\ds\AVLTree.java
-C:\Users\Priya Gundale\OneDrive\Documents\smart-inventory-system\backend\src\main\java\com\inventory\ds\MinHeap.java
-C:\Users\Priya Gundale\OneDrive\Documents\smart-inventory-system\backend\src\main\java\com\inventory\ds\ProductHashMap.java
-C:\Users\Priya Gundale\OneDrive\Documents\smart-inventory-system\backend\src\main\java\com\inventory\ds\SaleStack.java
-C:\Users\Priya Gundale\OneDrive\Documents\smart-inventory-system\backend\src\main\java\com\inventory\model\Product.java
-C:\Users\Priya Gundale\OneDrive\Documents\smart-inventory-system\backend\src\main\java\com\inventory\service\AlertService.java
-C:\Users\Priya Gundale\OneDrive\Documents\smart-inventory-system\backend\src\main\java\com\inventory\service\DemandService.java
-C:\Users\Priya Gundale\OneDrive\Documents\smart-inventory-system\backend\src\main\java\com\inventory\service\InventoryService.java
-C:\Users\Priya Gundale\OneDrive\Documents\smart-inventory-system\backend\src\main\java\com\inventory\SmartInventoryApplication.java
+C:\Users\Lenovo\Documents\GitHub\Stock-Sense\backend\src\main\java\com\inventory\controller\InventoryController.java
+C:\Users\Lenovo\Documents\GitHub\Stock-Sense\backend\src\main\java\com\inventory\ds\AVLTree.java
+C:\Users\Lenovo\Documents\GitHub\Stock-Sense\backend\src\main\java\com\inventory\ds\MinHeap.java
+C:\Users\Lenovo\Documents\GitHub\Stock-Sense\backend\src\main\java\com\inventory\ds\ProductHashMap.java
+C:\Users\Lenovo\Documents\GitHub\Stock-Sense\backend\src\main\java\com\inventory\ds\SaleStack.java
+C:\Users\Lenovo\Documents\GitHub\Stock-Sense\backend\src\main\java\com\inventory\ds\SalesTreeMap.java
+C:\Users\Lenovo\Documents\GitHub\Stock-Sense\backend\src\main\java\com\inventory\model\Product.java
+C:\Users\Lenovo\Documents\GitHub\Stock-Sense\backend\src\main\java\com\inventory\service\AlertService.java
+C:\Users\Lenovo\Documents\GitHub\Stock-Sense\backend\src\main\java\com\inventory\service\DemandService.java
+C:\Users\Lenovo\Documents\GitHub\Stock-Sense\backend\src\main\java\com\inventory\service\InventoryService.java
+C:\Users\Lenovo\Documents\GitHub\Stock-Sense\backend\src\main\java\com\inventory\SmartInventoryApplication.java

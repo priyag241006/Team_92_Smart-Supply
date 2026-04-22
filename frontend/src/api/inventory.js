@@ -20,3 +20,6 @@ export const getDashboard      = ()        => api.get('/dashboard').then(r => r.
 export const getDailySales     = (days=14) => api.get(`/analytics/daily?days=${days}`).then(r => r.data)
 export const getTopSelling     = (days=14) => api.get(`/analytics/top?days=${days}&n=5`).then(r => r.data)
 export const getForecast       = (id,w=7)  => api.get(`/analytics/forecast/${id}?window=${w}`).then(r => r.data)
+
+export const getExpiredLog     = ()        => api.get('/expired-log').then(r => r.data)
+export const clearExpiredLog   = ()        => api.delete('/expired-log').then(r => r.data)

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getDailySales, getTopSelling } from '../api/inventory'
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
+import { BarChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, ComposedChart } from 'recharts'
 import { RefreshCw, TrendingUp } from 'lucide-react'
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -47,32 +47,46 @@ export default function Analytics() {
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div>
           <div className="page-title">Analytics</div>
-          <div className="page-subtitle">Sales trends · Moving average · TreeMap date-range</div>
+          <div className="page-subtitle">Sales trends · Demand forecast · Top products</div>
         </div>
         <button className="btn" onClick={load}><RefreshCw size={13} /> Refresh</button>
       </div>
 
+      {/* Sales chart */}
       <div className="card" style={{ marginBottom: 16 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <div>
             <div style={{ fontWeight: 500, fontSize: 14 }}>Daily sales — last 14 days</div>
-            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>Bar = actual · Line = 7-day moving average</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
+              Bars = actual sales · Line = demand forecast (7-day average)
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 16, fontSize: 11 }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <span style={{ width: 10, height: 10, background: 'var(--green)', borderRadius: 2, display: 'inline-block' }} />
+              <span style={{ color: 'var(--text-secondary)' }}>Sales</span>
+            </span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <span style={{ width: 10, height: 2, background: 'var(--amber)', display: 'inline-block' }} />
+              <span style={{ color: 'var(--text-secondary)' }}>Forecast</span>
+            </span>
           </div>
         </div>
         <ResponsiveContainer width="100%" height={240}>
-          <BarChart data={daily} margin={{ top: 0, right: 0, bottom: 0, left: -20 }}>
+          <ComposedChart data={daily} margin={{ top: 0, right: 0, bottom: 0, left: -20 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
             <XAxis dataKey="date" tickFormatter={dateLabel} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} />
             <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} />
             <Tooltip content={<CustomTooltip />} />
-            <Bar dataKey="total" name="Sold" radius={[3, 3, 0, 0]} maxBarSize={32}>
+            <Bar dataKey="total" name="Sales" radius={[3, 3, 0, 0]} maxBarSize={32}>
               {daily.map((_, i) => <Cell key={i} fill={i === daily.length - 1 ? 'var(--green)' : 'rgba(34,211,165,0.35)'} />)}
             </Bar>
-            <Line type="monotone" dataKey="ma" name="7-day avg" stroke="var(--amber)" strokeWidth={2} dot={false} strokeDasharray="4 3" />
-          </BarChart>
+            <Line type="monotone" dataKey="ma" name="Forecast" stroke="var(--amber)" strokeWidth={2} dot={false} strokeDasharray="4 3" />
+          </ComposedChart>
         </ResponsiveContainer>
       </div>
 
+      {/* Top selling */}
       <div className="card">
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
           <TrendingUp size={15} color="var(--green)" />
