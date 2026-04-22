@@ -34,8 +34,12 @@ export default function Sidebar() {
             <Package size={16} color="#0a0e1a" strokeWidth={2.5} />
           </div>
           <div>
-            <div style={{ fontWeight: 600, fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.2 }}>StockSense</div>
-            <div style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>SMART INVENTORY</div>
+            <div style={{ fontWeight: 600, fontSize: 13, color: 'var(--text-primary)', lineHeight: 1.2 }}>
+              SmartSupply
+            </div>
+            <div style={{ fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
+              SMART INVENTORY
+            </div>
           </div>
         </div>
       </div>
