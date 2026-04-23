@@ -23,5 +23,5 @@ Traditional inventory systems lack real-time updates, predictive insights, and e
 - ArrayList with Sliding Window: Computes sales velocity and stockout prediction.
 - Moving Average: Used for demand forecasting in analytics.
 
-## Demo Video
+## Prototype Video link
 https://drive.google.com/file/d/1rWKcrnQAR7uIp8y6emI3YU04mKAcId6t/view?usp=sharing
